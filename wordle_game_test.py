@@ -7,7 +7,7 @@ class WordleGameTest(unittest.TestCase):
 
     def __init__(self, methodName):
         super().__init__(methodName)
-        self.game = wordle_game.WordleGame(['spam', 'eggs', 'span', 'pain'], 'spam', 4, 2)
+        self.game = wordle_game.WordleGame(['spam', 'eggs', 'span', 'pain'], 'spam', 4, 2, False)
 
     def test_init(self):        
         self.assertEqual(True, self.game.guesses_left())
