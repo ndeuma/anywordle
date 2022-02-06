@@ -71,12 +71,32 @@ class WordleGameTest(unittest.TestCase):
     # Implementation detail of original Wordle: When a letter is contained multiple times in the
     # guess, but only once in the solution, a 🟨 is only displayed for the first occurrence
     # in the guess. So, it's 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
-    def test_yellow_hint_only_displayed_once_for_every_occurrence(self):
+    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_1(self):
         result = self.game.guess('mess')
         self.assertFalse(result.is_success)
-        self.assertEqual('🟨⬜🟨⬜', result.hint)
-        self.assertEqual(True, self.game.guesses_left())
-        self.assertEqual(1, self.game.current_attempt)
+        self.assertEqual('🟨⬜🟨⬜', result.hint, 
+            "'s' gets only one 🟨, because it occurs only once in the solution")        
+
+    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_2(self):
+        special_game = wordle_game.WordleGame(['tossed', 'harass'], 'harass', 6, 2, False)
+        result = special_game.guess('tossed')
+        self.assertFalse(result.is_success)
+        self.assertEqual('⬜⬜🟨🟨⬜⬜', result.hint,
+            "'s' gets two 🟨, because it occurs twice in the solution")        
+    
+    def test_yellow_hint_only_displayed_once_for_every_occurrence_3_vs_2(self):
+        special_game = wordle_game.WordleGame(['tossed', 'schuss'], 'tossed', 6, 2, False)
+        result = special_game.guess('schuss')
+        self.assertFalse(result.is_success)
+        self.assertEqual('🟨⬜⬜⬜🟨⬜', result.hint,
+            "'s' gets only two 🟨, because it occurs only twice in the solution")        
+
+    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_1_overlap_with_green(self):
+        special_game = wordle_game.WordleGame(['post', 'mess'], 'post', 4, 2, False)
+        result = special_game.guess('mess')
+        self.assertFalse(result.is_success)
+        self.assertEqual('⬜⬜🟩⬜', result.hint,
+            "Second 's' gets no 🟨, because the only occurence of 's' in the solution is already a 🟩")        
 
 unittest.main()
 

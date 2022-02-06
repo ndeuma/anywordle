@@ -42,8 +42,23 @@ class WordleGame:
             if word[i] == self.solution[i]:
                 result += self.ICON_EXACT_MATCH
             elif word[i] in self.solution:
-                result += self.ICON_CONTAINED
+                if self.has_more_occurrences_up_to(i, word):
+                    result += self.ICON_NOT_CONTAINED
+                else:
+                    result += self.ICON_CONTAINED
             else:
                 result += self.ICON_NOT_CONTAINED
         return result
+
+    def has_more_occurrences_up_to(self, index, guess):
+        letter = guess[index] 
+        occurrences_in_guess = 0
+        occurrences_in_solution = 0
+        for i in range(len(self.solution)):
+            if (guess[i] == letter and i <= index):
+                occurrences_in_guess += 1
+            if (self.solution[i] == letter):
+                occurrences_in_solution += 1
+        return occurrences_in_guess > occurrences_in_solution
         
+
