@@ -3,7 +3,7 @@
 import argparse
 import random
 import re
-import wordle_game
+from wordle_game import *
 
 DEFAULT_WORDLIST_EN_US = '/usr/share/dict/american-english'
 DEFAULT_WORDLIST_EN_UK = '/usr/share/dict/british-english'
@@ -49,7 +49,7 @@ if (args.verbose):
 
 solution = words[random.randint(0, len(words) - 1)]
 
-game = wordle_game.WordleGame(words, solution, int(args.length), int(args.attempts), False)
+game = WordleGame(words, solution, int(args.length), int(args.attempts), False)
 
 while game.guesses_left():
     try:
@@ -61,7 +61,7 @@ while game.guesses_left():
             print(f'The word is: {game.solution}')
         else:
             print(result.hint)
-    except wordle_game.InvalidWordError as err:
+    except InvalidWordError as err:
         print(err)
 
     

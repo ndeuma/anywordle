@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
 
 import unittest
-import wordle_game
+from wordle_game import *
 
 class WordleGameTest(unittest.TestCase):
 
     def __init__(self, methodName):
         super().__init__(methodName)
-        self.game = wordle_game.WordleGame(['spam', 'eggs', 'span', 'pain', 'mess'], 'spam', 4, 2, False)
+        self.game = WordleGame(['spam', 'eggs', 'span', 'pain', 'mess'], 'spam', 4, 2, False)
 
     def test_init(self):        
         self.assertEqual(True, self.game.guesses_left())
         self.assertEqual(0, self.game.current_attempt)
 
     def test_word_too_long(self):
-        with self.assertRaises(wordle_game.InvalidWordError):
+        with self.assertRaises(InvalidWordError):
             self.game.guess('spain')
 
     def test_word_not_existing(self):
-        with self.assertRaises(wordle_game.InvalidWordError):
+        with self.assertRaises(InvalidWordError):
             self.game.guess('spal')
 
     def test_too_many_guesses(self):
         self.game.guess('pain')
         self.game.guess('pain')
-        with self.assertRaises(wordle_game.OutOfGuessesError):
+        with self.assertRaises(OutOfGuessesError):
             self.game.guess('pain')
 
     def test_guess_correct(self):        
@@ -68,32 +68,32 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual(True, self.game.guesses_left())
         self.assertEqual(1, self.game.current_attempt)
 
-    # Implementation detail of original Wordle: When a letter is contained multiple times in the
-    # guess, but only once in the solution, a 🟨 is only displayed for the first occurrence
-    # in the guess. So, it's 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
+    # Implementation detail of original Wordle: When a letter has more occurrences in the guess
+    # than in the solution, the number of 🟨 is only equal (or lower) than the number of 
+    # occurences in the solution. It can be lower when there are direct matches (🟩)
     def test_yellow_hint(self):
         
         self.assert_hint('spam', 'mess', '🟨⬜🟨⬜',  
-            '"\'s\' gets only one 🟨, because it occurs only once in the solution')
+            '"s" occurs only once in the solution, so only one 🟨 is displayed for the "s"')
         
         self.assert_hint('harass', 'tossed', '⬜⬜🟨🟨⬜⬜',          
-            '\'s\' gets two 🟨, because it occurs twice in the solution')
+            '"s" occurs twice in the solution, so two 🟨 are displayed')
 
         self.assert_hint('tossed', 'schuss', '🟨⬜⬜⬜🟨⬜',          
-            '\'s\' gets only two 🟨, because it occurs only twice in the solution')
+            '"s" occurs only twice in the solution, so only two 🟨 are displayed')
 
         self.assert_hint('post', 'mess', '⬜⬜🟩⬜',          
-            '\'s\' gets only one 🟩, because ther only occurrence in the solution is direct hit')
+            '"s" occurs only once in the solution and the only occurence is a direct match')
 
         self.assert_hint('chill', 'lulls', '🟨⬜⬜🟩⬜',          
-            '"l" gets only one 🟨 and one 🟩 takes for the occurrences in the solution')
+            'Second "l" is not displayed as 🟨 because the third one is a direct match')
 
         self.assert_hint('xyxxy', 'xxxxz', '🟩⬜🟩🟩⬜',          
-            '"x" gets only 🟩 for the occurrences in the solution')
+            '"x" occurs only three times in the solution, and all occurences are direct matches')
         
-    def assert_hint(self, solution, guess, hint, message):
-        special_game = wordle_game.WordleGame([solution, guess], solution, len(solution), 1, False)
-        self.assertEqual(hint, special_game.guess(guess).hint, message)
+    def assert_hint(self, solution, guess, expected_hint, message):
+        special_game = WordleGame([solution, guess], solution, len(solution), 1, False)
+        self.assertEqual(expected_hint, special_game.guess(guess).hint, message)
 
 unittest.main()
 
