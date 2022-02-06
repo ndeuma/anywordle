@@ -98,5 +98,12 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual('⬜⬜🟩⬜', result.hint,
             "Second 's' gets no 🟨, because the only occurence of 's' in the solution is already a 🟩")        
 
+    def test_yellow_hint_only_displayed_once_for_every_occurrence_3_vs_2_green_needed(self):
+        special_game = wordle_game.WordleGame(['chill', 'lulls'], 'chill', 5, 2, False)
+        result = special_game.guess('lulls')
+        self.assertFalse(result.is_success)
+        self.assertEqual('🟨⬜⬜🟩⬜', result.hint,
+            "'l' gets only one 🟨 because it occurs only twice in the solution, and the later 🟩 takes precedence")
+
 unittest.main()
 
