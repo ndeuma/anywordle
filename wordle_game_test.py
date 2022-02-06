@@ -69,8 +69,8 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual(1, self.game.current_attempt)
 
     # Implementation detail of original Wordle: When a letter is contained multiple times in the
-    # guess, but only once in the guess, a 🟨 is only displayed for the first occurrence
-    # in the guess. So, its 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
+    # guess, but only once in the solution, a 🟨 is only displayed for the first occurrence
+    # in the guess. So, it's 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
     def test_yellow_hint_only_displayed_once_for_every_occurrence(self):
         result = self.game.guess('mess')
         self.assertFalse(result.is_success)
