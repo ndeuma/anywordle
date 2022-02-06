@@ -52,13 +52,16 @@ class WordleGame:
 
     def has_more_occurrences_up_to(self, index, guess):
         letter = guess[index] 
+        exact_matches = 0
         occurrences_in_guess = 0
-        occurrences_in_solution = 0
+        occurrences_in_solution = 0        
         for i in range(len(self.solution)):
+            if (guess[i] == letter and self.solution[i] == letter):
+                exact_matches += 1
             if (guess[i] == letter and i <= index):
                 occurrences_in_guess += 1
             if (self.solution[i] == letter):
                 occurrences_in_solution += 1
-        return occurrences_in_guess > occurrences_in_solution
+        return occurrences_in_guess > occurrences_in_solution - exact_matches
         
 

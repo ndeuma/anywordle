@@ -71,39 +71,29 @@ class WordleGameTest(unittest.TestCase):
     # Implementation detail of original Wordle: When a letter is contained multiple times in the
     # guess, but only once in the solution, a 🟨 is only displayed for the first occurrence
     # in the guess. So, it's 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
-    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_1(self):
-        result = self.game.guess('mess')
-        self.assertFalse(result.is_success)
-        self.assertEqual('🟨⬜🟨⬜', result.hint, 
-            "'s' gets only one 🟨, because it occurs only once in the solution")        
+    def test_yellow_hint(self):
+        
+        self.assert_hint('spam', 'mess', '🟨⬜🟨⬜',  
+            '"\'s\' gets only one 🟨, because it occurs only once in the solution')
+        
+        self.assert_hint('harass', 'tossed', '⬜⬜🟨🟨⬜⬜',          
+            '\'s\' gets two 🟨, because it occurs twice in the solution')
 
-    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_2(self):
-        special_game = wordle_game.WordleGame(['tossed', 'harass'], 'harass', 6, 2, False)
-        result = special_game.guess('tossed')
-        self.assertFalse(result.is_success)
-        self.assertEqual('⬜⬜🟨🟨⬜⬜', result.hint,
-            "'s' gets two 🟨, because it occurs twice in the solution")        
-    
-    def test_yellow_hint_only_displayed_once_for_every_occurrence_3_vs_2(self):
-        special_game = wordle_game.WordleGame(['tossed', 'schuss'], 'tossed', 6, 2, False)
-        result = special_game.guess('schuss')
-        self.assertFalse(result.is_success)
-        self.assertEqual('🟨⬜⬜⬜🟨⬜', result.hint,
-            "'s' gets only two 🟨, because it occurs only twice in the solution")        
+        self.assert_hint('tossed', 'schuss', '🟨⬜⬜⬜🟨⬜',          
+            '\'s\' gets only two 🟨, because it occurs only twice in the solution')
 
-    def test_yellow_hint_only_displayed_once_for_every_occurrence_2_vs_1_overlap_with_green(self):
-        special_game = wordle_game.WordleGame(['post', 'mess'], 'post', 4, 2, False)
-        result = special_game.guess('mess')
-        self.assertFalse(result.is_success)
-        self.assertEqual('⬜⬜🟩⬜', result.hint,
-            "Second 's' gets no 🟨, because the only occurence of 's' in the solution is already a 🟩")        
+        self.assert_hint('post', 'mess', '⬜⬜🟩⬜',          
+            '\'s\' gets only one 🟩, because ther only occurrence in the solution is direct hit')
 
-    def test_yellow_hint_only_displayed_once_for_every_occurrence_3_vs_2_green_needed(self):
-        special_game = wordle_game.WordleGame(['chill', 'lulls'], 'chill', 5, 2, False)
-        result = special_game.guess('lulls')
-        self.assertFalse(result.is_success)
-        self.assertEqual('🟨⬜⬜🟩⬜', result.hint,
-            "'l' gets only one 🟨 because it occurs only twice in the solution, and the later 🟩 takes precedence")
+        self.assert_hint('chill', 'lulls', '🟨⬜⬜🟩⬜',          
+            '"l" gets only one 🟨 and one 🟩 takes for the occurrences in the solution')
+
+        self.assert_hint('xyxxy', 'xxxxz', '🟩⬜🟩🟩⬜',          
+            '"x" gets only 🟩 for the occurrences in the solution')
+        
+    def assert_hint(self, solution, guess, hint, message):
+        special_game = wordle_game.WordleGame([solution, guess], solution, len(solution), 1, False)
+        self.assertEqual(hint, special_game.guess(guess).hint, message)
 
 unittest.main()
 
