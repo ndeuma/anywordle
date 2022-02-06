@@ -68,6 +68,12 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual(True, self.game.guesses_left())
         self.assertEqual(1, self.game.current_attempt)
 
+    def test_strict_mode_chars_missing(self):
+        strict_mode_game = WordleGame(['spam', 'mess', 'pain'], 'spam', 4, 2, True)
+        strict_mode_game.guess('mess')
+        with self.assertRaises(InvalidInStrictModeError):
+            strict_mode_game.guess('pain')
+
     # Implementation detail of original Wordle: When a letter has more occurrences in the guess
     # than in the solution, the number of 🟨 is only equal (or lower) than the number of 
     # occurences in the solution. It can be lower when there are direct matches (🟩)

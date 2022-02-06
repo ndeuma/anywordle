@@ -18,6 +18,8 @@ def create_arg_parser():
         help='Allowed number of attempts (default: 6)')    
     parser.add_argument('-l', '--length', default=5,
         help='Length of word to guess (default: 5)')    
+    parser.add_argument('-s', '--strict', action='store_true', default=False,
+        help='Strict mode (hints must be used in subsequent guesses)')    
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
         help='Print detailed output')
     return parser
@@ -49,7 +51,7 @@ if (args.verbose):
 
 solution = words[random.randint(0, len(words) - 1)]
 
-game = WordleGame(words, solution, int(args.length), int(args.attempts), False)
+game = WordleGame(words, solution, int(args.length), int(args.attempts), args.strict)
 
 while game.guesses_left():
     try:
@@ -62,6 +64,8 @@ while game.guesses_left():
         else:
             print(result.hint)
     except InvalidWordError as err:
+        print(err)
+    except InvalidInStrictModeError as err:
         print(err)
 
     
