@@ -7,7 +7,7 @@ class WordleGameTest(unittest.TestCase):
 
     def __init__(self, methodName):
         super().__init__(methodName)
-        self.game = wordle_game.WordleGame(['spam', 'eggs', 'span', 'pain'], 'spam', 4, 2, False)
+        self.game = wordle_game.WordleGame(['spam', 'eggs', 'span', 'pain', 'mess'], 'spam', 4, 2, False)
 
     def test_init(self):        
         self.assertEqual(True, self.game.guesses_left())
@@ -65,6 +65,16 @@ class WordleGameTest(unittest.TestCase):
         result = self.game.guess('Pain')
         self.assertFalse(result.is_success)
         self.assertEqual('🟨🟨⬜⬜', result.hint)
+        self.assertEqual(True, self.game.guesses_left())
+        self.assertEqual(1, self.game.current_attempt)
+
+    # Implementation detail of original Wordle: When a letter is contained multiple times in the
+    # guess, but only once in the guess, a 🟨 is only displayed for the first occurrence
+    # in the guess. So, its 🟨⬜🟨⬜ and not 🟨⬜🟨🟨 here.
+    def test_yellow_hint_only_displayed_once_for_every_occurrence(self):
+        result = self.game.guess('mess')
+        self.assertFalse(result.is_success)
+        self.assertEqual('🟨⬜🟨⬜', result.hint)
         self.assertEqual(True, self.game.guesses_left())
         self.assertEqual(1, self.game.current_attempt)
 
