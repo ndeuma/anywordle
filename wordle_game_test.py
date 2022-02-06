@@ -34,6 +34,13 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual(True, self.game.guesses_left())
         self.assertEqual(1, self.game.current_attempt)
 
+    def test_guess_correct_is_case_insensitive(self):        
+        result = self.game.guess('Spam')
+        self.assertTrue(result.is_success)
+        self.assertEqual('🟩🟩🟩🟩', result.hint)
+        self.assertEqual(True, self.game.guesses_left())
+        self.assertEqual(1, self.game.current_attempt)
+
     def test_last_guess_successful(self):
         result = self.game.guess('pain')
         self.assertFalse(result.is_success)
@@ -55,7 +62,7 @@ class WordleGameTest(unittest.TestCase):
         self.assertEqual(1, self.game.current_attempt)
 
     def test_two_letters_contained(self):        
-        result = self.game.guess('pain')
+        result = self.game.guess('Pain')
         self.assertFalse(result.is_success)
         self.assertEqual('🟨🟨⬜⬜', result.hint)
         self.assertEqual(True, self.game.guesses_left())

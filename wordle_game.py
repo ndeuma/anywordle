@@ -27,13 +27,14 @@ class WordleGame:
         return self.current_attempt < self.attempts
     
     def guess(self, word):        
-        if word not in self.words:
+        word_lower = word.lower()
+        if word_lower not in self.words:
             raise InvalidWordError(f'{word} is not an allowed word')
         elif not self.guesses_left():
             raise OutOfGuessesError('No more guesses left')
         else:
             self.current_attempt += 1            
-            return GuessResult(word == self.solution, self.get_hint(word))
+            return GuessResult(word_lower == self.solution, self.get_hint(word_lower))
 
     def get_hint(self, word):
         result = ''
