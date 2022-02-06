@@ -23,7 +23,7 @@ def create_arg_parser():
     return parser
 
 def normalize(args, words):
-    letters_only = re.compile('^[a-z]{' + str(args.length) + '}$')
+    letters_only = re.compile('^[\w]{' + str(args.length) + '}$', re.U)
     return list(set( 
         filter(lambda w: len(w) == int(args.length) and letters_only.match(w), 
         map(lambda s: s[0:-1].lower(), words)))) # Remove trailing newline
