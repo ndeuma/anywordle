@@ -15,11 +15,19 @@ class WordleGameTest(unittest.TestCase):
 
     def test_word_too_long(self):
         with self.assertRaises(InvalidWordError):
-            self.game.guess('spain')
+            self.game.guess('spain')        
+        with self.assertRaises(InvalidWordError):
+            self.game.guess('spine')
+        self.assertEqual(0, self.game.current_attempt)
 
     def test_word_not_existing(self):
         with self.assertRaises(InvalidWordError):
             self.game.guess('spal')
+        with self.assertRaises(InvalidWordError):
+            self.game.guess('spuz')
+        with self.assertRaises(InvalidWordError):
+            self.game.guess('spoi')
+        self.assertEqual(0, self.game.current_attempt)
 
     def test_too_many_guesses(self):
         self.game.guess('pain')
@@ -73,6 +81,7 @@ class WordleGameTest(unittest.TestCase):
         strict_mode_game.guess('mess')
         with self.assertRaisesRegex(InvalidInStrictModeError, 'The following letters must be contained in the guess: m, s'):
             strict_mode_game.guess('pain')
+        self.assertEqual(1, strict_mode_game.current_attempt)
 
     def test_strict_mode_no_exact_match(self):
         strict_mode_game = WordleGame(['spam', 'spin', 'pain', 'sins'], 'spam', 4, 2, True)
@@ -81,6 +90,7 @@ class WordleGameTest(unittest.TestCase):
             strict_mode_game.guess('pain')
         with self.assertRaisesRegex(InvalidInStrictModeError, 'The letter at position 2 must be p'):
             strict_mode_game.guess('sins')
+        self.assertEqual(1, strict_mode_game.current_attempt)
 
     # Implementation detail of original Wordle: When a letter has more occurrences in the guess
     # than in the solution, the number of 🟨 is only equal (or lower) than the number of 
