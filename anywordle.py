@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import ansi_escape
 import argparse
 import random
 import re
@@ -62,7 +63,8 @@ while game.guesses_left():
         elif not game.guesses_left():
             print(f'The word is: {game.solution}')
         else:
-            print(result.hint)
+            print(result.hint + '    ' + game.get_keyboard(), end='')
+            print('\n')
     except InvalidWordError as err:
         print(err)
     except InvalidInStrictModeError as err:
