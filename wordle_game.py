@@ -80,10 +80,13 @@ class WordleGame:
                 occurrences_in_solution += 1
         return occurrences_in_guess > occurrences_in_solution - exact_matches
     
-    def get_validation_error(self, guess):
-        missing_chars = set(filter(lambda c: c not in guess, self.strict_mode_chars))
+    def get_validation_error(self, guess):        
+        for i in range(len(guess)):
+            if (i in self.strict_mode_exact_matches and self.strict_mode_exact_matches[i] != guess[i]):
+                return f'The letter at position {i+1} must be {self.strict_mode_exact_matches[i]}'
+        missing_chars = sorted(list(filter(lambda c: c not in guess, self.strict_mode_chars)))
         if len(missing_chars) > 0:
-            return f'The following characters must be contained in the guess: {", ".join(missing_chars)}'
+            return f'The following letters must be contained in the guess: {", ".join(missing_chars)}'
         return self.NO_ERROR
 
     def update_strict_mode_constraints(self, guess, result):

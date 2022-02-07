@@ -71,8 +71,16 @@ class WordleGameTest(unittest.TestCase):
     def test_strict_mode_chars_missing(self):
         strict_mode_game = WordleGame(['spam', 'mess', 'pain'], 'spam', 4, 2, True)
         strict_mode_game.guess('mess')
-        with self.assertRaises(InvalidInStrictModeError):
+        with self.assertRaisesRegex(InvalidInStrictModeError, 'The following letters must be contained in the guess: m, s'):
             strict_mode_game.guess('pain')
+
+    def test_strict_mode_no_exact_match(self):
+        strict_mode_game = WordleGame(['spam', 'spin', 'pain', 'sins'], 'spam', 4, 2, True)
+        strict_mode_game.guess('spin')        
+        with self.assertRaisesRegex(InvalidInStrictModeError, 'The letter at position 1 must be s'):
+            strict_mode_game.guess('pain')
+        with self.assertRaisesRegex(InvalidInStrictModeError, 'The letter at position 2 must be p'):
+            strict_mode_game.guess('sins')
 
     # Implementation detail of original Wordle: When a letter has more occurrences in the guess
     # than in the solution, the number of 🟨 is only equal (or lower) than the number of 
