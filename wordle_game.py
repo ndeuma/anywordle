@@ -1,6 +1,12 @@
 import ansi_escape
+from enum import Enum
 import re
 from string import ascii_uppercase
+
+class LetterStatus(Enum):
+    EXACT_MATCH = 0,
+    CONTAINED = 1,
+    NOT_CONTAINED = 2
 
 class InvalidWordError(Exception):            
     pass
@@ -16,6 +22,17 @@ class GuessResult:
         self.is_success = is_success
         self.hint = hint
 
+    def to_emoji(self):
+        result = ''
+        for letter_info in self.hint:
+            if letter_info[1] == LetterStatus.EXACT_MATCH:
+                result += '🟩'
+            elif letter_info[1] == LetterStatus.CONTAINED:
+                result += '🟨'
+            else:
+                result += '⬜'
+        return result
+
 class WordleGame:
 
     ICON_EXACT_MATCH = '🟩'
@@ -29,14 +46,14 @@ class WordleGame:
         self.solution = solution
         self.length = length
         self.attempts = attempts
-        self.current_attempt = 0
+        self.attempts_made = 0
         self.strict_mode = strict_mode
         self.exact_match_letters_by_position = {}
         self.contained_letters = set()
         self.excluded_letters = set()
 
     def guesses_left(self):
-        return self.current_attempt < self.attempts
+        return self.attempts_made < self.attempts
     
     def guess(self, word):        
         word_lower = word.lower()
@@ -49,24 +66,24 @@ class WordleGame:
                 strict_mode_error = self.get_validation_error(word)
                 if (strict_mode_error != self.NO_ERROR):
                     raise InvalidInStrictModeError(strict_mode_error)            
-            self.current_attempt += 1            
+            self.attempts_made += 1            
             result = GuessResult(word_lower == self.solution, self.get_hint(word_lower))
             if not result.is_success:
                 self.update_letter_hints(word_lower, result)
             return result
 
     def get_hint(self, word):
-        result = ''
+        result = []
         for i in range(len(word)):
             if word[i] == self.solution[i]:
-                result += self.ICON_EXACT_MATCH
+                result.append((word[i], LetterStatus.EXACT_MATCH))
             elif word[i] in self.solution:
                 if self.has_more_occurrences_up_to(i, word):
-                    result += self.ICON_NOT_CONTAINED
+                    result.append((word[i], LetterStatus.NOT_CONTAINED))
                 else:
-                    result += self.ICON_CONTAINED
+                    result.append((word[i], LetterStatus.CONTAINED))
             else:
-                result += self.ICON_NOT_CONTAINED
+                result.append((word[i], LetterStatus.NOT_CONTAINED))
         return result
 
     def has_more_occurrences_up_to(self, index, guess):
@@ -94,14 +111,16 @@ class WordleGame:
 
     def update_letter_hints(self, guess, result):
         for i in range(len(result.hint)):
-            if result.hint[i] == self.ICON_EXACT_MATCH:
-                self.exact_match_letters_by_position[i] = guess[i]
-                if guess[i] in self.contained_letters:
-                    self.contained_letters.remove(guess[i])
-            elif result.hint[i] == self.ICON_CONTAINED:
-                self.contained_letters.add(guess[i])
+            letter = result.hint[i][0]
+            status = result.hint[i][1]
+            if status == LetterStatus.EXACT_MATCH:
+                self.exact_match_letters_by_position[i] = letter
+                if letter in self.contained_letters:
+                    self.contained_letters.remove(letter)
+            elif status == LetterStatus.CONTAINED:
+                self.contained_letters.add(letter)
             else:
-                self.excluded_letters.add(guess[i])
+                self.excluded_letters.add(letter)
 
     def get_keyboard(self):
         result = ''

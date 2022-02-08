@@ -40,6 +40,19 @@ def read_and_normalize(args, *word_list_files):
             words = words + file.readlines()
     return normalize(args, words)
 
+def draw_hint(hint):
+    result = ''
+    for letter_info in hint:
+        letter = letter_info[0]
+        status = letter_info[1]
+        if status == LetterStatus.EXACT_MATCH:
+            result += ansi_escape.color_text_256(255, 34, letter.upper())
+        elif status == LetterStatus.CONTAINED:
+            result += ansi_escape.color_text_256(0, 11, letter.upper())
+        else:
+            result += letter.upper()
+    return result        
+
 args = create_arg_parser().parse_args()
 
 if args.wordlist == '':
@@ -56,14 +69,14 @@ game = WordleGame(words, solution, int(args.length), int(args.attempts), args.st
 
 while game.guesses_left():
     try:
-        result = game.guess(input(f'Attempt {game.current_attempt + 1}/{game.attempts}: '))
+        result = game.guess(input(f'Attempt {game.attempts_made + 1}/{game.attempts}: '))
         if (result.is_success):
             print('Congratulations!')
             break
         elif not game.guesses_left():
             print(f'The word is: {game.solution}')
         else:
-            print(result.hint + '    ' + game.get_keyboard(), end='')
+            print(draw_hint(result.hint) + '    ' + game.get_keyboard(), end='')
             print('\n')
     except InvalidWordError as err:
         print(err)
