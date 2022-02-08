@@ -2,12 +2,13 @@
 A highly configurable command line implementation of the "Wordle" word guessing game. Needs Python and the "dict" utility (installable on most Linux distributions). 
 
 ```
-usage: anywordle.py [-h] [-a ATTEMPTS] [-l LENGTH] [-v] [wordlist]
+usage: anywordle.py [-h] [-a ATTEMPTS] [-l LENGTH] [-s] [-v] [wordlist]
 
 A highly configurable implementation of the 'Wordle' word-guessing game.
 
 positional arguments:
-  wordlist              Word list file (default: English 'dict' dictionary files)
+  wordlist              Word list file (default: English 'dict' dictionary
+                        files)
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -15,6 +16,7 @@ optional arguments:
                         Allowed number of attempts (default: 6)
   -l LENGTH, --length LENGTH
                         Length of word to guess (default: 5)
+  -s, --strict          Strict mode (hints must be used in subsequent guesses)
   -v, --verbose         Print detailed output
 ```
 
