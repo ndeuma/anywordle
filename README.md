@@ -1,6 +1,8 @@
 # anywordle
 A highly configurable command line implementation of the "Wordle" word guessing game. Needs Python and the "dict" utility (installable on most Linux distributions). 
 
+![screenshot](https://user-images.githubusercontent.com/136928/153071478-f202cd05-ac76-48d8-86a8-0690453da1a1.png)
+
 ```
 usage: anywordle.py [-h] [-a ATTEMPTS] [-l LENGTH] [-s] [-v] [wordlist]
 
